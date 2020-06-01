@@ -11,13 +11,17 @@
 
     <groupId>io.xiaowei</groupId>
     <artifactId>eureka-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>eureka-server</name>
     <description>注册中心</description>
 
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
+
+        <!-- 仓库名 && 仓库地址 -->
+        <docker.registry.name>xiaowei</docker.registry.name>
+        <docker.repository>harbor.ioxiaowei.com:2100</docker.repository>
     </properties>
 
     <dependencies>
@@ -54,10 +58,35 @@
 
     <build>
         <plugins>
+
+            <!-- package -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <!-- docker -->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.14</version>
+                <configuration>
+                    <!-- maven settings -->
+                    <serverId>xiaowei-harbor</serverId>
+                    <!--指定镜像名称 仓库/镜像名:标签-->
+                    <imageName>
+                        ${docker.repository}/${docker.registry.name}/${project.artifactId}:${project.version}
+                    </imageName>
+                    <registryUrl>${docker.repository}</registryUrl>
+                    <dockerDirectory>./</dockerDirectory>
+                    <!--覆盖相同标签镜像-->
+                    <forceTags>true</forceTags>
+                    <imageTags>
+                        <imageTag>latest</imageTag>
+                    </imageTags>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
